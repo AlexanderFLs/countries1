@@ -8,7 +8,8 @@ import 'package:to_do_list/ui/page/city.dart';
 
 class Controller extends GetxController {
   final _spinner = RxBool(false);
-  List allCountries = RxList();
+  Rx<List<Country>> _allCountries = Rx([]);
+  List<Country> get allCountries => _allCountries.value;
   List allCities = RxList();
   String countryCode = '';
   final key = GlobalKey<FormState>();
@@ -22,10 +23,10 @@ class Controller extends GetxController {
         'https://masters-pages.dev.glob-com.ru/api/location/country?page=1&limit=100'));
     if (res.statusCode == 200) {
       final decode = jsonDecode(res.body);
-      List countries = (decode)
+      _allCountries.value = decode
           .map((itemCountry) => Countries.fromJson(itemCountry))
           .toList();
-      allCountries.addAll(countries);
+      update();
     } else {
       print('error ${res.statusCode}');
     }
